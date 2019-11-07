@@ -4,13 +4,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-export PATH=$GOPATH/src/github.com/hyperledger/fabric/build/bin:${PWD}/../bin:${PWD}:$PATH
+export FABRIC_LOCATION=${PWD}/../../../../hyperledger/fabric
+export PATH=$GOPATH/src/github.com/hyperledger/fabric/build/bin:${PWD}/../bin:$FABRIC_LOCATION/.build/bin:${PWD}:$PATH
 export FABRIC_CFG_PATH=${PWD}
 export CHANNEL_NAME=auctionchannel
 
 # remove previous crypto material and config transactions
 rm -fr config/*
 rm -fr crypto-config/*
+mkdir config
 
 # generate crypto material
 cryptogen generate --config=./crypto-config.yaml
