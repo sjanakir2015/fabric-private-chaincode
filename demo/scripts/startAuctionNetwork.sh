@@ -5,7 +5,12 @@
 #
 
 #!/bin/bash
-cd ${PWD}/scripts
+
+#  Possible improvements
+#    During cleanup prior to start of the scripts, some error messages appear. 
+#    Hide error conditions 
+
+#  clean up containers from previous run
 ./clearContainers.sh  
 
 set -ev
