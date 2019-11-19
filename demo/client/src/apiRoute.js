@@ -42,8 +42,17 @@ ApiRouter.route('/login').post(function (request, response) {
       "status": {  'rc': 1,  'msg': 'Username or userrole is not found;  what else do you want?'},
       "approle" : ""  //  or "FPC"
     };
-    res.send(JSON.stringify (result));
   }
+    /*var result =
+  {
+    "status": {  'rc': 1,  'msg': 'Username or userrole is not found;  what else do you want?'},
+    "approle" : ""
+  }; */
+
+    console.log ('result = ', result);
+    response.send(JSON.stringify (result));
+  });
+
 /*
     let userid = req.query.userName;
     fabricClient.setUserContext (userid, password)
@@ -74,10 +83,9 @@ ApiRouter.route('/login').post(function (request, response) {
         res.send(result);
     });
 */
-});
 
 ApiRouter.route('/api/getallusers').post(function (request, response) {
-  
+
       var result = [  {	"userid": "user1",		"approle": "bidder" },
                       {	"userid": "user2",		"approle": "bidder" },
                       {	"userid": "user3",		"approle": "bidder" },

@@ -50,6 +50,7 @@ var contract;
 //  exported functions
 
 async function readConfigData () {
+  console.log (">>> In function, readConfigData: ");
 
         // Read configuration file which gives
         //  1.  connection profile - that defines the blockchain network and the endpoints for its CA, Peers
