@@ -32,15 +32,13 @@ ApiRouter.route('/login').post(function (request, response) {
   {
     var result =
     {
-      "status": {  'rc': 0,  'msg': 'success;  what else do you want?'},
-      "approle" : userRole
+      "status": {  'rc': 0,  'msg': 'success'}
     };
   }
   else {
     var result =
     {
-      "status": {  'rc': 1,  'msg': 'Username or userrole is not found;  what else do you want?'},
-      "approle" : ""  //  or "FPC"
+      "status": {  'rc': 1,  'msg': 'userName or userRole is not found;'}
     };
   }
     /*var result =
@@ -84,14 +82,14 @@ ApiRouter.route('/login').post(function (request, response) {
     });
 */
 
-ApiRouter.route('/api/getallusers').post(function (request, response) {
+ApiRouter.route('/getallusers').get (function (request, response) {
 
       var result = [  {	"userid": "user1",		"approle": "bidder" },
                       {	"userid": "user2",		"approle": "bidder" },
                       {	"userid": "user3",		"approle": "bidder" },
                       {	"userid": "user4",		"approle": "bidder" },
   	                  {	"userid": "FCC",  		"approle": "auctioneer" } ];
-      res.send(JSON.stringify (result));
+      response.send(JSON.stringify (result));
 /*
     getAllUsers().then((result) => {
         // process response
