@@ -1,9 +1,10 @@
 
-### Goal: Bring up Auction network for demo
+### Goal: Bring up Fabric Auction network for demo
 
 ## Prequisites
 It is assumed that 
 - the repository is cloned in FPC-INSTALL-DIR which is ${GOPATH}/src/github.com/hyperledger-labs/fabric-private-chaincode 
+Although FPC is not used, the path is used in some scripts.  (This could possibly removed in later versions)
 
 Usage: 
 ```
