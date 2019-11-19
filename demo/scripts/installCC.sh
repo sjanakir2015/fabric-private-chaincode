@@ -13,17 +13,11 @@
 #  When (install + instantiate) commands are executed by hand, it works.  With scripting, the delay 
 #  due to manual action is absent.  Is that the reason?? 
 #  This version works.  TODO:  To come back and identify the reason for this error
-
+#  above comment is not valid anymore;  But this version works !  
 set -ev
 export WAIT_TIME=15
-docker exec cli peer chaincode install -n mockcc -v 1.0 --path /opt/chaincode/javascript -l NODE
-sleep ${WAIT_TIME} 
-
-docker exec cli peer chaincode instantiate -n mockcc -v 1.0  --channelID mychannel -o orderer.example.com:7050 -c '{"Args":[]}' 
-sleep ${WAIT_TIME} 
-
 docker exec cli peer chaincode install -n mockcc -v 1.1 --path /opt/chaincode/javascript  -l NODE
 sleep ${WAIT_TIME} 
 
-docker exec cli peer chaincode upgrade -n mockcc -v 1.1  --channelID mychannel -o orderer.example.com:7050 -c '{"Args":[]}' 
+docker exec cli peer chaincode instantiate -n mockcc -v 1.1  --channelID mychannel -o orderer.example.com:7050 -c '{"Args":[]}' 
 sleep ${WAIT_TIME} 

@@ -13,12 +13,11 @@ COPY package.json /usr/src/app/package.json
 COPY package-lock.json /usr/src/app/package-lock.json
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 WORKDIR /usr/src/app
-RUN npm install
 
 # RUN npm rebuild
 
 COPY gateway /usr/src/app/gateway
 COPY src /usr/src/app/src
-COPY config.json /usr/src/config.json
+COPY config.json /usr/src/app/config.json
 
-CMD npm start
+CMD npm install; npm start
