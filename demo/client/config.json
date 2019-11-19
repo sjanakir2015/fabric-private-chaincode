@@ -1,0 +1,16 @@
+{
+    "connection_profile_filename":"../gateway/localhost/connection_profile.json",
+    "channel_name":"mychannel",
+    "chaincode_name":"mockcc",
+    "wallet": "../gateway/localhost/wallet",
+    "mspDir_docker": "/opt/hyperledger/msp/users/",
+    "mspDir_mac": "/Users/sowmya@ibm.com/dev/SGX/fabric-network-scripts/temp/crypto-config/peerOrganizations/org1.example.com/users/",
+    "admin_user_name":"Admin",
+
+    "users" : [
+    {"username":  "user1", "userRole" : "bidder"} ,
+    {"username":  "user2", "userRole" : "bidder"},
+    {"username":  "user3", "userRole" : "bidder"} ,
+    {"username":  "user4", "userRole" : "bidder"} ,
+    {"username":  "user5", "userRole" : "FPC"} ]
+}
