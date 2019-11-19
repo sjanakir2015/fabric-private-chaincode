@@ -1,0 +1,20 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "FPC client",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js ",
+    "test": "node src/server.js "
+  },
+  "author": "Sowmya Janakiraman",
+  "private": true,
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.17.1",
+    "fs": "0.0.1-security",
+    "path": "0.12.7",
+    "fabric-network": "1.4.4",
+    "uuid": "^3.3.2"
+  }
+}

@@ -1,0 +1,254 @@
+/*
+* Copyright IBM Corp All Rights Reserved
+*
+* SPDX-License-Identifier: Apache-2.0
+*/
+
+'use strict';
+const { Gateway, Client, FileSystemWallet, X509WalletMixin } = require('fabric-network');
+const fs = require('fs');
+const path = require('path');
+
+////////////////////////////  Global constants  /////////////////
+//  errorcodes
+const SUCCESS = 0;
+const FAILURE  = 1;
+
+/////////////////////////////  input  //////////////////////////////////////////
+//  Coming soon... a config.json for these inputs    ///////////////////////////
+const orgName        = 'Org1MSP';
+const orgDomainName  = 'org1.example.com';
+
+
+// Parse the connection profile, in the CURRENT folder
+// const ccpPath = path.resolve(__dirname, "ccp_localhost.json");
+//const ccpPath = path.resolve(__dirname, "connection_profile.json");
+/////////////////////////////  end of input  ///////////////////////////
+
+// Load connection profile; will be used to locate a gateway
+//  var connectionProfile = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
+
+//  global variables loaded initially
+var mspDir;
+var connectionProfile;
+var wallet;
+var credentialsPath;
+var signCerts;
+var keyfile;
+var adminUserName;
+var bLocalHost;  //  is this used??
+
+//  other global variables
+var strResponse;
+var gateway;
+var network;
+var contract;
+
+//  local functions
+
+
+async function readConfigData () {
+
+        // Read configuration file which gives
+        //  1.  connection profile - that defines the blockchain network and the endpoints for its CA, Peers
+        //  2.  channel name
+        //  3.  chaincode name
+        //  4.  wallet - collection of certificates
+        //  5.  username - identity to be used for performing transactions, initially
+
+      const platform = process.env.PLATFORM || 'LOCAL';
+      var configdata = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+
+      // A wallet stores a collection of identities
+      const walletLocation = configdata["wallet"];
+      console.log ("walletLocation = ",walletLocation);
+      wallet =  new FileSystemWallet(walletLocation);
+
+      // Parse the connection profile
+      const ccpPath = path.resolve(__dirname, configdata["connection_profile_filename"]);
+      console.log ("ccpPath = ",ccpPath);
+
+      // Load connection profile; will be used to locate a gateway
+      connectionProfile = JSON.parse(fs.readFileSync(ccpPath, 'utf8'));
+      console.log ("Connection Profile loaded");
+
+/*    //  not used now
+      //  Read channel name and chaincode_name
+      const channelName = configdata["channel_name"];
+      console.log ("channelName = ",channelName);
+
+      const chaincodeName = configdata["chaincode_name"];
+      console.log ("chaincodeName = ",chaincodeName);
+*/
+      adminUserName = configdata["admin_user_name"];
+      console.log ("admin user name = ", adminUserName);
+
+      // Path to msp folder for the Identity whose credentials are to be stored in the wallet
+      // const mspDir = '/Users/sowmya@ibm.com/dev/SGX/fabric-network-scripts/temp/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/';
+
+      mspDir = configdata["mspDir_docker"] + adminUserName  + '\@' + orgDomainName + '/msp/';   // Admin@org1.example.com';
+      // mspDir = configdata["mspDir_mac"] + adminUserName  + '\@' + orgDomainName + '/msp/';   // Admin@org1.example.com';
+      console.log ("mspDir = ", mspDir);
+      credentialsPath = path.resolve(__dirname, mspDir);
+
+      //  convenience variables for enrollUser
+      signCerts = 'signcerts/' + adminUserName + '\@' + orgDomainName + '-cert.pem';
+      keyfile = 'keystore/adminKey.pem';
+
+
+      var i = 0;
+      var testStr = configdata["users"][i].username;
+      var roleStr = configdata["users"][i].userRole;
+      console.log ("users[0] = ", testStr);
+      console.log ("users[0].role = ", roleStr);
+
+      var i = 1;
+      var testStr = configdata["users"][i].username;
+      var roleStr = configdata["users"][i].userRole;
+      console.log ("users[0] = ", testStr);
+      console.log ("users[0].role = ", roleStr);
+
+      var i = 2;
+      var testStr = configdata["users"][i].username;
+      var roleStr = configdata["users"][i].userRole;
+      console.log ("users[0] = ", testStr);
+      console.log ("users[0].role = ", roleStr);
+
+      var i = 3;
+      var testStr = configdata["users"][i].username;
+      var roleStr = configdata["users"][i].userRole;
+      console.log ("users[0] = ", testStr);
+      console.log ("users[0].role = ", roleStr);
+
+      var i = 4;
+      var testStr = configdata["users"][i].username;
+      var roleStr = configdata["users"][i].userRole;
+      console.log ("users[0] = ", testStr);
+      console.log ("users[0].role = ", roleStr);
+
+      bLocalHost = true;
+      console.log ("Local platform = " + platform);
+}
+
+
+//  exported functions
+
+async function addIdentityToWallet() {
+    console.log (">>> In function, addIdentityToWallet: ");
+    try {
+	      const cert = fs.readFileSync(path.join(credentialsPath, signCerts)).toString();
+        const key = fs.readFileSync(path.join(credentialsPath, keyfile)).toString();
+
+        // console.log ("cert is " + cert);
+        // console.log ("key  is " + key);
+
+	      // Load credentials into wallet
+        const identityLabel = adminUserName;
+	      const identity = X509WalletMixin.createIdentity(orgName, cert, key);
+
+        //  copies the certificates into the local wallet
+        await wallet.import(identityLabel, identity);
+
+    } catch (error) {
+        console.log(`Error adding to wallet. ${error}`);
+        console.log(error.stack);
+    }
+}
+
+async function connectToNetwork(channelName, chaincodeID) {
+    console.log (">>> In function, connectToNetwork: channelName, chaincodeID = ", channelName, chaincodeID);
+    readConfigData();
+
+    try {
+      await addIdentityToWallet();
+    }  catch (error)  {
+      console.log(`Error adding to wallet. ${error}`);
+      console.log(error.stack);
+    }
+
+    try {
+      gateway = await new Gateway();
+    }  catch (error) {
+      console.log(`Error creating new gateway`);
+      console.log(error.stack);
+    }
+
+    await gateway.connect(connectionProfile,
+        	  {
+              wallet,
+              identity:            adminUserName,
+              discovery:           { enabled: false, localhost: true },
+              eventHandlerOptions: { strategy: null }
+      		  });
+    console.log ("Connected to gateway");
+    network =  await gateway.getNetwork (channelName);
+    console.log ("Connected to channel, " + channelName);
+
+    contract =  await network.getContract (chaincodeID);
+    console.log ("Connected to chaincode, ", chaincodeID);
+
+}
+
+async function submitTransaction(txName, arg1,arg2,arg3,arg4,arg5,arg6) {
+         console.log (">>> In function, fabricClient:submitTransaction: ");
+
+         //  is there a better way to do this?
+         //  use notation "...args";
+         switch  (arguments.length) {
+           case 2:
+               var result = contract.submitTransaction(txName, arg1);
+               break;
+           case 3:
+               var result = contract.submitTransaction(txName, arg1,arg2);
+               break;
+           case 4:
+               var result = contract.submitTransaction(txName, arg1,arg2,arg3);
+               break;
+           case 5:
+               var result = contract.submitTransaction(txName, arg1,arg2,arg3,arg4);
+               break;
+           case 6:
+               var result = contract.submitTransaction(txName, arg1,arg2,arg3,arg4,arg5);
+               break;
+           default:
+               var result = contract.submitTransaction(txName);
+         };
+
+         return result.then((response) => {
+         // process response
+         console.log('Submitted transaction successfully');
+
+         console.log ("-------------------------------------");
+         console.log ("Response(buffer): " ,  response);
+         console.log ("-------------------------------------");
+
+         //  convert buffer to string
+         var bufferData = {
+                                 "type" : "Buffer",
+                                 "data" : []
+                          };
+             bufferData["data"] = response;
+             strResponse = String.fromCharCode.apply (null, bufferData["data"]);
+
+         console.log ("Response (string): ", strResponse);
+         console.log ("-------------------------------------");
+
+         //console.log ('If base64 encoded, to decode the response, use ... echo <ResponseData> | base64 -d - ; echo "  "');
+         //console.log ("-------------------------------------");
+
+         return Promise.resolve(strResponse);
+         },(error) =>
+         {
+             //  handle error if transaction failed
+             console.log('Error thrown from tx promise',error);
+             return Promise.reject(error);
+         });
+
+     }
+
+
+module.exports = {
+    addIdentityToWallet:addIdentityToWallet,
+    connectToNetwork:connectToNetwork,
+    submitTransaction:submitTransaction
+}
