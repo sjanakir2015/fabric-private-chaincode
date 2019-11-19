@@ -202,7 +202,7 @@ clockPriceIncrementPercentage : 10
             'result': [
                         { 'territoryId' : 4, 'assignPrice': 23,
                           'channels': [ {'id': 1, 'price': 1 },
-                                        {'id': 2, 'price': 1 }
+                                        {'id': 2, 'price': 1 },
                                         {'id': 3, 'price': 1 },
                                         {'id': 4, 'price': 1 },
                                         {'id': 5, 'price': 1 },

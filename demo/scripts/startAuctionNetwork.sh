@@ -5,13 +5,13 @@
 #
 
 #!/bin/bash
-cd $GOPATH/src/github.com/hyperledger-labs/fabric-private-chaincode/demo/scripts
+cd ${PWD}/scripts
 ./clearContainers.sh  
 
 set -ev
 # generate crypto material, genesis blocks
 # start Fabric network (1 Org), create and join channel, mychannel
-cd $GOPATH/src/github.com/hyperledger-labs/fabric-private-chaincode/demo/network 
+cd ../network
 ./startFabric.sh 
 
 #install and instantiate chaincode

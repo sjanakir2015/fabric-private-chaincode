@@ -247,7 +247,7 @@ async function connectToNetwork(channelName, chaincodeID) {
     console.log (">>> In function, connectToNetwork: channelName, chaincodeID = ", channelName, chaincodeID);
 
 readConfigData();
-    /*
+
     try {
       await addIdentityToWallet();
     }  catch (error)  {
@@ -275,7 +275,7 @@ readConfigData();
 
     contract =  await network.getContract (chaincodeID);
     console.log ("Connected to chaincode, ", chaincodeID);
-    */
+    
 
 }
 
