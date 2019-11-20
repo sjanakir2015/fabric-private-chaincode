@@ -16,8 +16,11 @@
 #  above comment is not valid anymore;  But this version works !  
 set -ev
 export WAIT_TIME=15
-docker exec cli peer chaincode install -n mockcc -v 1.1 --path /opt/chaincode/javascript  -l NODE
+export version=1.1
+
+docker image prune -f
+docker exec cli peer chaincode install -n mockcc -v ${version} --path /opt/chaincode/javascript  -l NODE
 sleep ${WAIT_TIME} 
 
-docker exec cli peer chaincode instantiate -n mockcc -v 1.1  --channelID mychannel -o orderer.example.com:7050 -c '{"Args":[]}' 
+docker exec cli peer chaincode instantiate -n mockcc -v ${version}  --channelID mychannel -o orderer.example.com:7050 -c '{"Args":[]}' 
 sleep ${WAIT_TIME} 
