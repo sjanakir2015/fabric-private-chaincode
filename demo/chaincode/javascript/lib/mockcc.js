@@ -8,7 +8,7 @@ const { Contract } = require('fabric-contract-api');
 
 class MockCC extends Contract {
 
-/*
+
     async createAuction(ctx, jsonAuction) {
         console.info('>>> Entry: Tx: createAuction');
         var result =
@@ -20,17 +20,42 @@ class MockCC extends Contract {
 
         console.info('>>> Exit: Tx: createAuction');
     }
-    */
-
+/*  //  createAuction function with HUGE JSON
     async createAuction(ctx, jsonAuction) {
         console.info('>>> Entry: Tx: createAuction');
         var result =
             {
               "status": {  'rc': 0,  'msg': 'Auction created'},
               "id" : '1',
-              "owner": "ECC",
+              "owner": { "id" : 1, "mspid": “org4”, "dn": “user4”, "name": “ECC” },
               "name": "ECC Spectrum auction",
-              "initialEligibilities": [ ],
+
+              "territories":
+              [ {'id' : 1,  name : “Elbograd”, minPrice : 12,
+              channels : [
+              {'id': 1, 'name': '1', "impairment":80 },
+              {'id': 2, 'name': '2', "impairment":80 },
+              {'id': 3, 'name': '3', "impairment":80 }] },
+
+              { id : 2,  name : “Mudberg”, minPrice : 12, channels :
+              [{'id': 1, 'name': '1', "impairment":80 },
+              {'id': 2, 'name': '2', "impairment":80 },
+              {'id': 3, 'name': '3', "impairment":80 }] },
+
+              { id : 3,  name : Deserton, minPrice : 12, channels :
+              [{'id': 1, 'name': '1', "impairment":80 },
+              {'id': 2, 'name': '2', "impairment":80 },
+              {'id': 3, 'name': '3', "impairment":80 }] }
+              ],
+
+              "bidders":
+              [{ id : 1, mspid: “org1”, dn: “user1”, name: "A-Telco" },
+               { id : 2, mspid: “org2”, dn: “user2”, name: "B-Net" },
+               { id : 3, mspid: “org3”, dn: “user3”, name: "C-Mobil" } ],
+              "initialEligibilities":
+              [ { 'bidId' : 1, 'number' : 10 },
+                { 'bidId' : 2, 'number' : 10 },
+                { 'bidId' : 3, 'number' : 10 } ],
               "requiredEligibilityPercentage": 95,
               "clockPriceIncrementPercentage": 10
             };
@@ -38,17 +63,8 @@ class MockCC extends Contract {
 
         console.info('>>> Exit: Tx: createAuction');
     }
-
-        /* {
-owner : $principal
-name : “...”,
-territories  : [ $territory, $territory, … ]
-bidders :[ $principal, $principal, … ],
-initialEligibilities : [ $eligibility, $eligibility, ..as many as bidders.. ]
-requiredEligibilityPercentage : 95,
-clockPriceIncrementPercentage : 10
-}
 */
+
     async getAuctionDetails (ctx, auctionId) {
       console.info('>>> Entry: Tx: getAuctionDetails');
 
@@ -201,8 +217,8 @@ clockPriceIncrementPercentage : 10
             'status': {  'rc': 0,  'msg': 'Round results for Bidder returned.'},
             'result': [
                         { 'territoryId' : 4, 'assignPrice': 23,
-                          'channels': [ {'id': 1, 'price': 1 },
-                                        {'id': 2, 'price': 1 },
+                          'channels': [ {'id': 1, 'name': 1, "impairment":80 },
+                                        {'id': 2, 'name': 1 },
                                         {'id': 3, 'price': 1 },
                                         {'id': 4, 'price': 1 },
                                         {'id': 5, 'price': 1 },
