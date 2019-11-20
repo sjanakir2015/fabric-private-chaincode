@@ -23,11 +23,10 @@ ApiRouter.route('/login').post(function (request, response) {
   const userName  = request.body.userName;
   const userRole = request.body.userRole;
 
-  if  ( ( (userName == "user5") && (userRole == "FPC") )  ||
+  if  ( ( (userName == "user4") && (userRole == "auctioneer") )  ||
 
-        ( ( (userName == "user4") || (userName == "user3") ||
-       (userName == "user2") || (userName == "user1") )  &&
-       (userRole == "bidder") )
+        (((userName == "user3") || (userName == "user2") || (userName == "user1") )  &&
+         (userRole == "bidder"))
      )
   {
     var result =
@@ -87,8 +86,7 @@ ApiRouter.route('/getallusers').get (function (request, response) {
       var result = [  {	"userid": "user1",		"approle": "bidder" },
                       {	"userid": "user2",		"approle": "bidder" },
                       {	"userid": "user3",		"approle": "bidder" },
-                      {	"userid": "user4",		"approle": "bidder" },
-  	                  {	"userid": "FCC",  		"approle": "auctioneer" } ];
+                      {	"userid": "user4",		"approle": "auctioneer" }];
       response.send(JSON.stringify (result));
 /*
     getAllUsers().then((result) => {
