@@ -44,8 +44,11 @@ class MockCC extends Contract {
       {
         "id": 1,
         "name": "Elbograd",
+        "isHighDemand": false,
         "minprice ": 12,
-        "channels": [{
+        "channels":
+        [
+          {
           "id": 1,
           "name": "1",
           "impairment": 80
@@ -90,6 +93,7 @@ class MockCC extends Contract {
       {
         "id": 2,
         "name": "Mudberg",
+        "isHighDemand": false,
         "minprice ": 15,
         "channels": [{
           "id": 1,
@@ -136,6 +140,7 @@ class MockCC extends Contract {
       {
         "id": 3,
         "name": "Deserton",
+        "isHighDemand": false,
         "minprice ": 9,
         "channels": [{
           "id": 1,
@@ -166,6 +171,7 @@ class MockCC extends Contract {
       {
         "id": 4,
         "name": "Phlimsk",
+        "isHighDemand": false,
         "minprice ": 18,
         "channels": [{
           "id": 1,
@@ -223,7 +229,8 @@ class MockCC extends Contract {
         "number": 10
       }
     ],
-    "requiredEligibilityPercentage": 95,
+    "activityRequirementPercentage":95,
+    //  earlier :  "requiredEligibilityPercentage": 95,
     "clockPriceIncrementPercentage": 10
   };
       console.info('>>> Exit: Tx: getAuctionDetails');
