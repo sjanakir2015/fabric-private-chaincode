@@ -26,21 +26,19 @@ class MockCC extends Contract {
       console.info('>>> Entry: Tx: getAuctionDetails');
 
       var result =
+
       {
-         "owner" : {
-          "id": 1,
-          "name": "A-Telco",
-          "dn": "user1"
-        },
-    "id": 1,
-    "owner": {
+
       "id": 1,
-      "mspid": "org4",
+      "owner":
+      {
+      "id": 1,
+      "mspid": "Org1MSP",
       "dn": "user4",
       "name": "ECC"
-    },
-    "name": "ECC Spectrum auction",
-    "territories": [
+      },
+      "name": "ECC Spectrum auction",
+      "territories": [
       {
         "id": 1,
         "name": "Elbograd",
@@ -95,7 +93,8 @@ class MockCC extends Contract {
         "name": "Mudberg",
         "isHighDemand": false,
         "minprice ": 15,
-        "channels": [{
+        "channels": [
+          {
           "id": 1,
           "name": "1",
           "impairment": 70
@@ -203,16 +202,19 @@ class MockCC extends Contract {
     "bidders": [{
         "id": 1,
         "name": "A-Telco",
+        "mspid": "Org1MSP",
         "dn": "user1"
       },
       {
         "id": 2,
         "name": "B-Net",
+        "mspid": "Org1MSP",
         "dn": "user2"
       },
       {
         "id": 3,
         "name": "C-Mobil",
+        "mspid": "Org1MSP",
         "dn": "user3"
       }
     ],
@@ -230,7 +232,6 @@ class MockCC extends Contract {
       }
     ],
     "activityRequirementPercentage":95,
-    //  earlier :  "requiredEligibilityPercentage": 95,
     "clockPriceIncrementPercentage": 10
   };
       console.info('>>> Exit: Tx: getAuctionDetails');

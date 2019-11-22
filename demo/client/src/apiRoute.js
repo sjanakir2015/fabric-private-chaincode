@@ -11,21 +11,33 @@ const fabricClient = require('./fabricClient');
 const ApiRouter = express.Router();
 
 /*
-login()
+login():  Does not use password.  Uses only userName and userRole.
+If the pair is a valid pair (according to config / CA), login is successful.
+Assumption is that only those users who are authorized to use this application
+has access - since this is being developed for a demo.  In a production system,
+there is a need for a controlled access to the application - by OAuth, AppId, etc.
+
 input:  userName, userRole
-output:  user, approle
-response.errorcode:  SUCCESS, USER_NOT_ENROLLED, TRANSACTION_ERROR
-response.errormessage:  will have text for error message (edited)
+output:  status json
+status.rc:  SUCCESS, USER_NOT_ENROLLED, TRANSACTION_ERROR
+status.msg:  corresponding error msg
 */
 ApiRouter.route('/login').post(function (request, response) {
   console.log ("In route /api/login:  request.body = ", request.body);
-  // console.log (">>>  In route /api/login:  ");
+  console.log (">>>  In route /api/login:  ");
   const userName  = request.body.userName;
   const userRole = request.body.userRole;
 
-  if  ( ( (userName == "user4") && (userRole == "auctioneer") )  ||
+/*  registered users are :
+  {"userName":"A-Telecom","userRole":"bidder"},
+       {"userName":"B-Net","userRole":"bidder"},
+       {"userName":"C-Mobile","userRole":"bidder"},
+       {"userName":"Auctioneer1","userRole":"auctioneer"}
+*/
 
-        (((userName == "user3") || (userName == "user2") || (userName == "user1") )  &&
+  if  ( ( (userName == "Auctioneer1") && (userRole == "auctioneer") )  ||
+
+        (((userName == "A-Telecom") || (userName == "B-Net") || (userName == "C-Mobile") )  &&
          (userRole == "bidder"))
      )
   {
@@ -40,21 +52,16 @@ ApiRouter.route('/login').post(function (request, response) {
       "status": {  'rc': 1,  'msg': 'userName or userRole is not found;'}
     };
   }
-    /*var result =
-  {
-    "status": {  'rc': 1,  'msg': 'Username or userrole is not found;  what else do you want?'},
-    "approle" : ""
-  }; */
 
     console.log ('result = ', result);
     response.send(JSON.stringify (result));
   });
 
 /*
-    let userid = req.query.userName;
-    fabricClient.setUserContext (userid, password)
+    let userName = req.query.userName;
+    fabricClient.setUserContext (userName, password)
     .then ((result) => {
-        console.log('>>> GET login() ... userid = ' + userid);
+        console.log('>>> GET login() ... userName = ' + userName);
         fabricClient.submitTransaction('Tx_GetUserRole', '').then((userRole) => {
             console.log ("Successfully submitted Tx_GetUserRole:" + userRole);
             var result = {};
@@ -82,11 +89,13 @@ ApiRouter.route('/login').post(function (request, response) {
 */
 
 ApiRouter.route('/getallusers').get (function (request, response) {
+userName or userRole
+      var result = [
+     {"userName":"A-Telecom","userRole":"bidder"},
+     {"userName":"B-Net","userRole":"bidder"},
+     {"userName":"C-Mobile","userRole":"bidder"},
+     {"userName":"Auctioneer1","userRole":"auctioneer"} ];
 
-      var result = [  {	"userid": "user1",		"approle": "bidder" },
-                      {	"userid": "user2",		"approle": "bidder" },
-                      {	"userid": "user3",		"approle": "bidder" },
-                      {	"userid": "user4",		"approle": "auctioneer" }];
       response.send(JSON.stringify (result));
 /*
     getAllUsers().then((result) => {
