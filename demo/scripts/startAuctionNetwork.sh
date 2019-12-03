@@ -7,33 +7,36 @@
 #!/bin/bash
 
 #  Possible improvements
-#    During cleanup prior to start of the scripts, some error messages appear. 
-#    Hide error conditions 
+#    During cleanup prior to start of the scripts, some error messages appear.
+#    Hide error conditions
 
 #  clean up containers from previous run
-./clearContainers.sh  
+./clearContainers.sh
 
 set -ev
 # generate crypto material, genesis blocks
 # start Fabric network (1 Org), create and join channel, mychannel
 cd ../network
-./startFabric.sh 
+./startFabric.sh
 
 #install and instantiate chaincode
-cd ../scripts 
-./installCC.sh 
+cd ../scripts
+./installCC.sh
+
+#register users for auction demo
+cd ../client/backend
+./registerUsers.sh
 
 # start client container
-cd ../client
-make run 
-sleep 5 
+# cd ../client
+make run
+sleep 5
 
 # start frontend container
 cd ../frontend
-make run 
+make run
 sleep 5
 
 # test: Submit a few transactions to client
-cd ../scripts 
-./submitTx.sh 
-
+cd ../../scripts
+./submitTx.sh

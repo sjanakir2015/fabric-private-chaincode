@@ -15,7 +15,7 @@ git checkout mockcc
 
 ## Build images once
 ```
-cd <FPC-INSTALL-DIR>/demo/client
+cd <FPC-INSTALL-DIR>/clock_auction/client/backend
 make build
 cd ../frontend
 make build
@@ -23,14 +23,14 @@ make build
 
 ## Bring up network
 ```
-cd <FPC-INSTALL-DIR>/demo/scripts
+cd <FPC-INSTALL-DIR>/clock_auction/scripts
 ./startAuctionNetwork.sh
 ```
 
 ## Test
 
 ```
-cd <FPC-INSTALL-DIR>/demo/scripts
+cd <FPC-INSTALL-DIR>/clock_auction/scripts
 ./submitTx.sh
 ```
 
@@ -40,11 +40,10 @@ If you see json responses for the curl commands, then connectivity to client and
 
 To upgrade a chaincode:
 ```
-cd <FPC-INSTALL-DIR>/demo/scripts
+cd <FPC-INSTALL-DIR>/clock_auction/scripts
 ./upgradeCC.sh  2.0
 ./upgradeCC.sh workingversion
 ```
-
 
 Note:  Add the following lines to .gitignore file:
 ```
@@ -52,4 +51,16 @@ Note:  Add the following lines to .gitignore file:
 **/wallet/*
 **/config/*
 **/crypto-config/*
+```
+
+## Backend apis
+
+Get the list of registered users.  No authentication is in place for this api.
+```http://localhost:3000/api/getRegisteredUsers
+```
+
+Use one of the following functions to invoke a transaction or query.  Please note that any chaincode function can be called using invoke or query.   The api expects the following header:  `{x-user:username}` where `username` is an entry in the list from `getRegisteredUsers`.
+```
+http://localhost:3000/api/cc/invoke
+http://localhost:3000/api/cc/query
 ```

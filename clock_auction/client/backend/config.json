@@ -1,0 +1,13 @@
+{
+    "connection_profile_filename":"../gateway/localhost/connection_profile.json",
+    "channel_name":"mychannel",
+    "smart_contract_name":"mockcc",
+    "wallet": "../gateway/localhost/wallet",
+    "admin_user_name":"org1admin",
+
+    "users" : [
+    {"userName":  "A-Telecom",   "userRole" : "auction.bidder"} ,
+    {"userName":  "B-Net",       "userRole" : "auction.bidder"},
+    {"userName":  "C-Mobile",    "userRole" : "auction.bidder"} ,
+    {"userName":  "Auctioneer1", "userRole" : "auction.auctioneer"} ]
+}

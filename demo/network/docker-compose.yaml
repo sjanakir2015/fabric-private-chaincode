@@ -47,7 +47,7 @@ services:
 
 
 ################################  couchdB container Org1   #######################
-  couchdb: 
+  couchdb:
      container_name: couchdb
      image: hyperledger/fabric-couchdb
      environment:
@@ -63,15 +63,18 @@ services:
     container_name: ca.example.com
     image: hyperledger/fabric-ca
     environment:
+      - FABRIC_LOGGING_SPEC=debug
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=Org1ca.example.com
+      - FABRIC_CA_SERVER_CA_NAME=ca.example.com
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
-      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/need_to_copy_sk_filename_here
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/ca-keyfile.pem
     ports:
       - 7054:7054
-    command: sh -c 'fabric-ca-server start -b admin:adminpw'
+    #command: sh -c 'sleep 900000'
+    command: sh -c 'fabric-ca-server start -b caadmin:adminpw'
     volumes:
       - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ./cafiles:/etc/hyperledger/fabric-ca-server-config/cafiles
     networks:
       - basic
 
@@ -82,6 +85,7 @@ services:
     environment:
       - FABRIC_LOGGING_SPEC=debug
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
       - ORDERER_GENERAL_GENESISMETHOD=file
       - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
@@ -119,7 +123,7 @@ services:
       #  - $GOPATH/src/github.com/hyperledger-labs/fabric-private-chaincode/demo/chaincode/:/opt/gopath/src/github.com/chaincode/
       - ./../chaincode:/opt/chaincode/
       - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
-      - ./config:/opt/gopath/src/github.com/hyperledger/fabric/peer/config/ 
+      - ./config:/opt/gopath/src/github.com/hyperledger/fabric/peer/config/
     networks:
         - basic
     depends_on:
@@ -127,4 +131,3 @@ services:
       - peer0.org1.example.com
 
 ################################  end  ############################
-

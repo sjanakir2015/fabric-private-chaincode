@@ -22,7 +22,9 @@ if [ "$?" -ne 0 ]; then
 fi
 
 # copy admin key files to adminKey.pem for ease of use
-cp crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/*sk crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/adminKey.pem 
+cp crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/*sk crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/adminKey.pem
+cp crypto-config/peerOrganizations/org1.example.com/ca/*sk crypto-config/peerOrganizations/org1.example.com/ca/ca-keyfile.pem
+
 # generate genesis block for orderer
 configtxgen --configPath . -profile OneOrgOrdererGenesis -outputBlock ./config/genesis.block
 if [ "$?" -ne 0 ]; then
@@ -52,20 +54,20 @@ export MSYS_NO_PATHCONV=1
 # Assumed that containers not defined in docker-compose.yaml are already killed
 # before this script was started
 set +e
-docker-compose -f docker-compose.yaml down 
+docker-compose -f docker-compose.yaml down
 if [ $? -gt 0 ]
     then
      echo "    "
      echo "Make sure all containers in docker-network, fabric_basic have been deleted."
-     echo "Use Command:  docker container kill client frontend"  
+     echo "Use Command:  docker container kill client frontend"
      exit 1
     fi
 
 set -e
-docker container list 
-docker container prune -f 
-docker-compose -f docker-compose.yaml up -d orderer.example.com peer0.org1.example.com cli
-docker container list 
+docker container list
+docker container prune -f
+docker-compose -f docker-compose.yaml up -d orderer.example.com peer0.org1.example.com cli ca.example.com
+docker container list
 
 # wait for Hyperledger Fabric to start
 # incase of errors when running later commands, issue export FABRIC_START_TIMEOUT=<larger number>
@@ -78,4 +80,3 @@ docker exec -e "CORE_PEER_LOCALMSPID=Org1MSP" -e "CORE_PEER_MSPCONFIGPATH=/etc/h
 
 # Join peer0.org1.example.com to the channel.
 docker exec -e "CORE_PEER_LOCALMSPID=Org1MSP" -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.example.com/msp" peer0.org1.example.com peer channel join -b ${CHANNEL_NAME}.block
-
