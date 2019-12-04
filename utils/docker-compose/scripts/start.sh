@@ -5,14 +5,14 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # Exit on first error, print all commands.
-set -e
+set -ev
 
 export SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # don't rewrite paths for Windows Git Bash users
 export MSYS_NO_PATHCONV=1
+export COMPOSE_PROJECT_NAME=fabric101
 export NETWORK_CONFIG=${SCRIPT_DIR}/../network-config
-export COMPOSE_PROJECT_NAME=fabric-fpc
 export FABRIC_VERSION=1.4.3
 
 if [[ $USE_FPC = false ]]; then
@@ -23,13 +23,6 @@ else
     # FABRIC_BIN_DIR needs to be set for FPC Peer CMD
     export FABRIC_BIN_DIR=/project/src/github.com/hyperledger/fabric/.build/bin
 fi
-
-# The following echo statements are here so users know the environment variables being used and
-# can use them with docker-compose.yml directly if desired.
-echo "export COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}"
-echo "export FABRIC_VERSION=${FABRIC_VERSION}"
-echo "export PEER_CMD=${PEER_CMD}"
-echo "export FPC_CONFIG=${FPC_CONFIG}"
 
 docker-compose -f ${NETWORK_CONFIG}/docker-compose.yml down
 

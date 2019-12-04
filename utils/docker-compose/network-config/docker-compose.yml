@@ -3,23 +3,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-
-# Environment Variables that need to be set to use this file
-#
-#   COMPOSE_PROJECT_NAME - This is used to ensure all chaincode containers are running on the same network
-#                          as the peers, orderer, and ca. The only requirement is that this is set to
-#                          some string and cannot be left blank. To match with the scripts use `fabric-fpc`.
-#   FABRIC_VERSION       - This is the version of fabric being used that should match with an image tag
-#                          for hyperledger/fabric-orderer. Recommended value is `1.4.3`.
-#   FPC_CONFIG           - Set this to `-fpc` to bring up a network using FPC Peers. Leaving it unset
-#                          will cause the network to use the hyperledger/fabric-peer:latest images
-#   PEER_CMD             - This variable indicates which peer binary should be used to start the peer.
-#                          If regular peers are desired set this value to `peer`, if FPC peers are
-#                          desired set this value to
-#                          `/project/src/github.com/hyperledger-labs/fabric-private-chaincode/fabric/bin/peer.sh`
-#
-#
-#
 version: '2'
 
 networks:

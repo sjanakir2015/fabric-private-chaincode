@@ -8,7 +8,7 @@
 set -e
 
 export SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-export COMPOSE_PROJECT_NAME=fabric-fpc
+export COMPOSE_PROJECT_NAME=fabric101
 export NETWORK_CONFIG=${SCRIPT_DIR}/../network-config
 
 # Shut down the Docker containers for the system tests.

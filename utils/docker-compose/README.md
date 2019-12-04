@@ -25,6 +25,14 @@ is used. Otherwise it will use `core.yaml` and the regular peer image.
  the peer.  **Docker version 17.06.2-ce or higher is needed**
 
 ## Steps
+1. Download the necessary fabric binaries. Run the
+[bootstrap script](scripts/bootstrap.sh) which will download the Fabric 1.4.3
+into a local bin directory. If you already have the binaries downloaded in your
+path, this step can be skipped. **Fabric 1.4.3 versions of configtxgen and
+cryptogen are required to use the configurations above.**
+```
+./scripts/bootstrap.sh
+```
 1. Build the peer image in `utils/docker/peer` directory which is defined by the
 peer [Dockerfile](../docker/peer/Dockerfile). This step
 assumes you have already built the [fabric-private-chaincode base image](../docker/base/Dockerfile).
@@ -39,7 +47,7 @@ docker build -t hyperledger/fabric-peer-fpc .
 By default the image will clone the master branch on
 https://github.com/hyperledger-labs/fabric-private-chaincode. If you want to use
 a different fork of the repo or a different branch you provide
-`FPC_REPO_URL` and `FPC_REPO_BRANCH` as build args.
+FPC_REPO_URL and FPC_REPO_BRANCH as build args.
 ```
 cd $FPC_PATH/utils/docker/peer
 docker build -t hyperledger/fabric-peer-fpc --build-arg FPC_REPO_URL=<repo-url> --build-arg FPC_REPO_BRANCH=<repo-branch> .
@@ -52,19 +60,7 @@ so that the local repo will be in the build context for the docker daemon.
 cd $FPC_PATH
 docker build -t hyperledger/fabric-peer-fpc -f utils/docker/peer/Dockerfile --build-arg FPC_REPO_URL=file:///tmp/build-src/.git --build-arg FPC_REPO_BRANCH=$(git rev-parse --abbrev-ref HEAD) .
 ```
-2. Download the necessary fabric binaries. Run the
-[bootstrap script](scripts/bootstrap.sh) which will download the Fabric 1.4.3
-into a local bin directory. The bootstrap script will download all the binaries
-to the location from where the scripts are run from. The rest of the tutorial
-expects the binaries to be in. If you already have the binaries downloaded in
-your path, this step can be skipped.**Fabric 1.4.3 versions of configtxgen and
-cryptogen are required to use the configurations above.**
-```
-cd $FPC_PATH/utils/docker-compose
-scripts/bootstrap.sh
-```
-
-3. Generate the cryptographic material needed for the network by running the
+2. Generate the cryptographic material needed for the network by running the
 [generate](scripts/generate.sh) script. Cryptogen will be used to generate all the
 credentials needed based on the configuration filesabove and place them in the
 `network-config/crypto-config` directory.  Configtxgen will be used to create
@@ -76,28 +72,23 @@ docker-compose file. **This script is not
 idempotent and will delete the contents of `crypto-config` & `config` when run
 to ensure a clean start.**
 ```
+cd $FPC_PATH/utils/docker-compose
 scripts/generate.sh
 ```
-
-4. Start the network. Run the [start](scripts/start.sh) script. This will use
+3. Start the network. Run the [start](scripts/start.sh) script. This will use
 docker-compose to start the network as well as starting the channel `mychannel`.
 By default, this script will use FPC peers. If non FPC peers are desired, set
 `$USE_FPC` to `false`.
 ```
-scripts/start.sh
+.scripts/start.sh
 ```
 
 ## Deploying your FPC Chaincode
-The [examples](../../examples) directory has been [mounted](base/base.yaml) into
- the peer container for convenience, under
- `/project/src/github.com/hyperledger-labs/fabric-private-chaincode/examples`.
- **NOTE** If you are running a normal fabric network, the rest of the tutorial
- will not work.
+The examples directory has been mounted into the peer container for convenience,
+under `/opt/examples`.
 
 1. Follow the [steps](../../examples/README.md) in the tutorial to build your
 chaincode outside of the peer container. Do not continue to the testing step.
-Though this tutorial references the hello world example, users can also deploy
-other FPC examples using similar steps.
 
 The rest of these steps should be done within the peer container.
 
@@ -106,19 +97,25 @@ The rest of these steps should be done within the peer container.
 docker exec -it peer0.org1.example.com bash
 ```
 
-3. Set environment variable to use the admin credentials and set the
+3. Set up the peer command environment variable for convenience. `$FPC_CMDS` is
+already defined in the container.
+```
+export PEER_CMD=$FPC_CMDS/peer.sh
+```
+
+4. Set environment variable to use the admin credentials and set the
 orderer address.
 ```
 export CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.example.com/msp
 export ORDERER_ADDR=orderer.example.com:7050
 ```
 
-4. Install your chaincode. `PEER_CMD` is defined in the container already.
+5. Install your chaincode
 ```
 ${PEER_CMD} chaincode install -l fpc-c -n helloworld_test -v 0 -p examples/helloworld/_build/lib
 ```
 
-5. Instantiate your chaincode
+6. Instantiate your chaincode
 ```
 ${PEER_CMD} chaincode instantiate -o orderer.example.com:7050 -C mychannel -n helloworld_test -v 0 -c '{"Args":["init"]}' -V ecc-vscc
 ```
@@ -149,15 +146,15 @@ asset1:100
 ```
 
 ## Create a User with Fabric-CA
-5. Enter into the [`node-sdk`](node-sdk) directory, to use the node sdk scripts
-to create new users.
-```
-cd node-sdk
-```
-
 4. Ensure you have all the node modules
 ```
 npm install
+```
+
+5. Enter into the `node-sdk` directory, to use the node sdk scripts to create
+new users.
+```
+cd node-sdk
 ```
 
 6. Enroll as the admin download the admin credentials
@@ -227,4 +224,4 @@ node invoke.js <identity-to-use> <channel-name> <chaincode-id> <args>...
 this in the root of this repo. **NOTE** This will try to remove all your
 containers and prune all excess volumes.
 ```
-scripts/teardown.sh
+.scripts/teardown.sh
