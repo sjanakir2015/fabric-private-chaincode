@@ -5,6 +5,8 @@
 It is assumed that
 - the repository is cloned in FPC-INSTALL-DIR which is ${GOPATH}/src/github.com/hyperledger-labs/fabric-private-chaincode
 Although FPC is not used, the path is used in some scripts.  (This could possibly removed in later versions)
+-  jq (JSON processor) is installed.  jq is used in one of the scripts (client/backend/registerUsers.sh). 
+
 
 Usage:
 ```
@@ -45,7 +47,8 @@ cd <FPC-INSTALL-DIR>/clock_auction/scripts
 ./upgradeCC.sh workingversion
 ```
 
-Note:  Add the following lines to .gitignore file:
+Note:  
+Add the following lines to .gitignore file:
 ```
 **/node_modules/*
 **/wallet/*
@@ -56,7 +59,8 @@ Note:  Add the following lines to .gitignore file:
 ## Backend apis
 
 Get the list of registered users.  No authentication is in place for this api.
-```http://localhost:3000/api/getRegisteredUsers
+```
+http://localhost:3000/api/getRegisteredUsers
 ```
 
 Use one of the following functions to invoke a transaction or query.  Please note that any chaincode function can be called using invoke or query.   The api expects the following header:  `{x-user:username}` where `username` is an entry in the list from `getRegisteredUsers`.
