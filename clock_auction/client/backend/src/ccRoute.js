@@ -27,7 +27,7 @@ ChaincodeRouter.route('/invoke').post(function (request, response) {
 
   //  get userName from "Authorization" header
   //  decode from base64
-  var userName = ( request.headers['authorization']);
+  var userName = ( request.headers['x-user']);
 
   //  decode it
   //userName  = Buffer.from(userName, 'base64').toString('utf-8');
@@ -66,7 +66,7 @@ ChaincodeRouter.route('/query').post(function (request, response) {
 
   //  get userName from "Authorization" header
   //  decode from base64
-  var userName = ( request.headers['authorization']);
+  var userName = ( request.headers['x-user']);
 
   //  decode it
   //userName  = Buffer.from(userName, 'base64').toString('utf-8');
