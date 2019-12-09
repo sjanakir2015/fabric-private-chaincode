@@ -173,13 +173,12 @@ async function registerUser(userid, pwd, approle) {
      //  Register is done using admin signing authority
      //  get adminIdentity from the global variable "gateway" in which admin identity has been loaded.
      const adminIdentity =  gateway.getCurrentIdentity() ;
-     //console.log ("Function registerUser:  adminIdentity = " + adminIdentity);
 
      caclient.register(newUserDetails, adminIdentity)
          .then((newPwd) => {
              //  if a password was set in 'enrollmentSecret' field of newUserDetails,
              //  the same password is returned by "register".
-             //  if a password was set in 'enrollmentSecret' field of newUserDetails,
+             //  if a password was not set in 'enrollmentSecret' field of newUserDetails,
              //  then a generated password is returned by "register".
              console.log("\n---------------------------------------------------");
              console.log('\n Secret returned from call to register: ' + newPwd);
@@ -415,21 +414,6 @@ async function beginNetworkConnect() {
 async function endNetworkConnect () {
   console.log (">>> In function, fabricClient.endNetworkConnect: ");
 
-/*
-  try {
-      //  TODO:  SJ:  getRegisteredUsers is used here for testing;
-      //  remove before checking in
-      let list = await getRegisteredUsers();
-      var tmp;
-      if (list != undefined) {
-          for (var i =0; i < list.length; i++) {
-              console.log ("list[" + i + "] = ", list[i]);
-          }
-      }
-  } catch (error) {
-      console.log ("  In function, fabricClient.endNetworkConnect: " + error );
-  }
-*/
   console.log ("<<< function, fabricClient.endNetworkConnect ");
 
 }
@@ -441,7 +425,7 @@ async function readConfigData () {
         //  1.  connection profile - that defines the blockchain network and the endpoints for its CA, Peers
         //  2.  channel name
         //  3.  chaincode name
-        //  4.  wallet - collection of certificates
+        //  4.  wallet location - collection of certificates
         //  5.  adminUserName - identity to be used for performing transactions, initially
         //  6.  bLocahHost
 

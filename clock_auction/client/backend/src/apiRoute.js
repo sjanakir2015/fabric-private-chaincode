@@ -30,8 +30,8 @@ status.msg:  corresponding error msg
 ApiRouter.route('/login').post(function (request, response) {
     //  console.log ("In route /api/login:  request.body = ", request.body);
     console.log (">>>  In route /api/login:  ");
-    const userName  = request.body.userName;
-    const userRole = request.body.userRole;
+    const userName  = request.body.id;
+    const userRole = request.body.appRole;
     const secret   = "adminpw";  //  need to be passed from UI?
 
     //  Todo:  add this:  check if user credentials exist in the wallet

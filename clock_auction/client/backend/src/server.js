@@ -6,15 +6,10 @@
 
 'use strict';
 
-//const { Gateway, Client, FileSystemWallet, X509WalletMixin } = require('fabric-network');
-//const fs = require('fs');
-//const path = require('path');
 const fabricClient = require('./fabricClient');
 const ccRoute = require('./ccRoute');
 const apiRoute = require('./apiRoute');
-
-// const auctionRoute = require('./auctionRoute');
-
+const clockauctionRoute = require('./clockauctionRoute');
 
 ////////////////////////////  Global constants  /////////////////
 //  errorcodes
@@ -37,30 +32,17 @@ app.get('/',(function(req,res){
     res.send('Welcome to Spectrum Auction by Elbonia Communication Commission - Enabled by FPC');
 }));
 
-//  route for cc
+//  different routes defined
 app.use('/api/cc', ccRoute);
 app.use('/api', apiRoute);
-
-//  route for /auction  //  mock data
-// app.use('/auction', auctionRoute);
+app.use('/api/clock_auction', clockauctionRoute);
 
 async function main() {
     console.log ("Listening on localhost:3000...");
     var server=app.listen(3000,function() {});
 
-    //await fabricClient.addIdentityToWallet();
-     await fabricClient.connectToNetwork ("mychannel", "mockcc");
-
-    //  test connection for sacc
-    //  await fabricClient.submitTransaction("set", "key1", "899") ;
-    //  test connection for mockcc
-    //await fabricClient.submitTransaction("createAuction", "101") ;
+    await fabricClient.connectToNetwork ("mychannel", "mockcc");
 }
 
 
 main();
-
-  // curl -H "Content-Type: application/json" -X POST -d '{"tx":"createAuction","args":["90"]}' http://localhost:3000/cc/submit
-  // curl -H "Content-Type: application/json" -X POST -d '{"tx":"createAuction","args":["90"]}' http://localhost:3000/cc/submit
-  // curl -H "Content-Type: application/json" -X POST -d '{"tx":"createAuction","args":["90"]}' http://localhost:3000/cc/submit
-  // curl -H "Content-Type: application/json" -X POST -d '{"tx":"createAuction","args":["90"]}' http://localhost:3000/cc/submit
