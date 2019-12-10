@@ -83,7 +83,7 @@ ChaincodeRouter.route('/query').post(function (request, response) {
   .then(function (result)  {
     response.json (result);
   })
-  .catch(err => {
+  .catch(error => {
     //  if enrollUser failed then send 401 Unauthorized
     if (error.status.rc == USER_UNAUTHORIZED) {
       response.status(401).send(error);

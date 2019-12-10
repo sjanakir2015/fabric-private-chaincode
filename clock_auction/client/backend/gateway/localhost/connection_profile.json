@@ -43,11 +43,7 @@
 
     "certificateAuthorities": {
         "ca.example.com": {
-            "unused2-url": "http://localhost:7054",
-            "unused1-home-url": "http://192.168.0.6:7054",
-            "unused-nov26-url": "http://9.24.25.103:7054",
             "url": "http://ca.example.com:7054",
-            "unused-httpOptions": { "verify": false },
             "registrar": {
                 "enrollId": "admin",
                 "enrollSecret": "adminpw"
