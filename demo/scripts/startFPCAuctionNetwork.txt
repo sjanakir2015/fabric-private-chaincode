@@ -41,6 +41,14 @@ Following can go in a script
 Filename:  startFPCAuctionNetwork.sh
 ##########################################
 
+folder structure for demo application
+FPC_PATH/demo
+FPC_PATH/demo/client/backend
+FPC_PATH/demo/client/frontend
+FPC_PATH/demo/chaincode
+FPC_PATH/demo/scripts
+##########################################
+
 export FPC_PATH=$GOPATH/src/github.com/hyperledger-labs/fabric-private-chaincode
 export USE_FPC=true
 export FPC_CFG="-fpc"

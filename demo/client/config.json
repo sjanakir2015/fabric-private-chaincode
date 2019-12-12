@@ -1,7 +1,7 @@
 {
     "connection_profile_filename":"../gateway/localhost/connection_profile.json",
     "channel_name":"mychannel",
-    "chaincode_name":"mockcc",
+    "chaincode_name":"ecc_clockauction_test",
     "wallet": "../gateway/localhost/wallet",
     "mspDir_docker": "/opt/hyperledger/msp/users/",
     "mspDir_mac": "/Users/sowmya@ibm.com/dev/SGX/fabric-network-scripts/temp/crypto-config/peerOrganizations/org1.example.com/users/",
