@@ -1,0 +1,105 @@
+##########################################
+collect from FPC Repo
+##########################################
+1.  clone FPC master
+
+#  C++ chaincode to be placed in demo/chaincode
+2.  clone brunos ... fabric-secure-chaincode
+- copy brunos .../demo/clock-auction-chaincode  to FPCpath/demo/chaincode
+---
+#  build FPC, chaincode
+on FPC folder,
+make clean
+make
+make demo/chaincode
+---
+
+##########################################
+To build base image:
+##########################################
+ADD:  volume mounting of chaincode volume in base.yaml;
+Modified base.yaml;
+Mount FPC_PATH/demo in addition to FPC_PATH/examples folder
+---
+ADD:  an env variable to give the chaincode folder for the usecase;
+
+
+##########################################
+After base image is built, to build peer image:
+##########################################
+export FPC_PATH=$GOPATH/src/github.com/hyperledger-labs/fabric-private-chaincode
+export FPC_CFG="-fpc"
+export USE_FPC=true
+#export PEER_CMD=FABRIC_SCRIPTDIR="${FPC_PATH}/fabric/bin/peer.sh"
+
+------- to use locally cloned folders to build docker image for fpc-peer
+cd $FPC_PATH
+docker build -t hyperledger/fabric-peer-fpc -f utils/docker/peer/Dockerfile --build-arg FPC_REPO_URL=file:///tmp/build-src/.git --build-arg FPC_REPO_BRANCH=$(git rev-parse --abbrev-ref HEAD) .
+
+##########################################
+Following can go in a script
+Filename:  startFPCAuctionNetwork.sh
+##########################################
+
+export FPC_PATH=$GOPATH/src/github.com/hyperledger-labs/fabric-private-chaincode
+export USE_FPC=true
+export FPC_CFG="-fpc"
+
+# assuming docker image hyperledger/fabric-peer-fpc has been built already
+
+cd $FPC_PATH/utils/docker-compose
+scripts/bootstrap.sh
+scripts/generate.sh
+scripts/start.sh
+
+
+# Now that fpc peer is up, install and instantiate chaincode
+
+# Need to modify volume mount to include demo folder
+#  ********  MODIFIED in FPC_PATH/utils/docker-compose/network-config/base/base.yaml :
+#   - ../../../../clock_auction:/project/src/github.com/hyperledger-labs/fabric-private-chaincode/demo
+#
+#Assuming channel is created and peer is joined in the channel:
+
+export CC_ID=clockauction_test
+export CC_VERS=1.0
+export CHAN_ID=mychannel
+export CC_LANGUAGE=fpc-c
+export ${PEER_CMD}=${FPC_PATH}/fabric/bin/peer.sh
+
+docker exec peer0.org1.example.com  \
+  -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.example.com/msp" \
+  -e "ORDERER_ADDR=orderer.example.com:7050" \
+  ${PEER_CMD} chaincode install -l ${CC_LANGUAGE} -n ${CC_ID} -v ${CC_VERS} -p demo/chaincode/_build/lib
+
+docker exec peer0.org1.example.com  \
+  -e "CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/users/Admin@org1.example.com/msp" \
+  -e "ORDERER_ADDR=orderer.example.com:7050" \
+  ${PEER_CMD} chaincode instantiate -o ${ORDERER_ADDR} -C mychannel -n ${CC_ID} -v ${CC_VERS} -c '{"Args":[]}' -V ecc-vscc
+
+
+#################  client/backend  #################
+
+cd demo/client/backend
+# registers org1admin, org1 users  (bidders and auctioneer)
+#  this needs jq, as of now
+./registerUsers.sh
+
+#  Makefile is to removed; instead create a docker compose file
+# to bring up client/backend and client/frontend
+  -  change network name to "fabric-fpc_basic" in client/backend/Makefile
+  make (if first time) or
+  make run (if backend docker image has already been built)
+
+  when client container is brought up
+  check:
+   docker logs client
+client is running at localhost:backend_port
+   #################  client/frontend  #################
+cd $FPC_PATH/demo/client/frontend
+
+-  copy frontend code from Marcus's fork
+-  build image
+-  run image
+-  application available at localhost:frontend_port
+########################################################
